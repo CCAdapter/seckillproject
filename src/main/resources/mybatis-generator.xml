@@ -30,6 +30,7 @@
         <!--        <table tableName="user_info" domainObjectName="UserDO"></table>-->
         <!--        <table tableName="user_password" domainObjectName="UserPasswordDO"></table>-->
 
+        <!--禁止自动生成DOExample类和mapper文件中的复杂查询-->
         <table tableName="user_info" domainObjectName="UserDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"></table>
