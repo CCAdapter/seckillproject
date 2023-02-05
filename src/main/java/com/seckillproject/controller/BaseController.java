@@ -22,7 +22,7 @@ public class BaseController {
     public Object handlerException(HttpServletRequest request, Exception ex) {
         HashMap<String, Object> responseData = new HashMap<>();
 
-//        ex.printStackTrace();
+        ex.printStackTrace();
 
         if (ex instanceof BusinessException) {
             BusinessException businessException = (BusinessException) ex;
