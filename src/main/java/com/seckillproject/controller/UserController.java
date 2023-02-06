@@ -7,7 +7,6 @@ import com.seckillproject.error.EmBusinessError;
 import com.seckillproject.response.CommonReturnType;
 import com.seckillproject.service.UserService;
 import com.seckillproject.service.model.UserModel;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,6 +31,26 @@ public class UserController extends BaseController {
     // 它的内部有ThreadLocal方式的map，用户在每个线程当中处理自己的request，所以单例的HttpServletRequest支持多个用户的并发访问
     @Autowired
     private HttpServletRequest httpServletRequest;
+
+    // 用户登录接口
+    @RequestMapping(value = "/login", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
+    @ResponseBody
+    public CommonReturnType login(@RequestParam(name = "telphone") String telphone,
+                                  @RequestParam(name = "password") String password) throws BusinessException, NoSuchAlgorithmException {
+        if (StringUtils.isEmpty(telphone) || StringUtils.isEmpty(password)) {
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+
+        // 用户登录服务，用来校验用户登录是否合法
+        UserModel userModel = userService.validateLogin(telphone, this.EncodeByMd5(password));
+
+        // 将登录凭证加入到用户登录成功的session内
+        httpServletRequest.getSession().setAttribute("IS_LOGIN", true);
+        httpServletRequest.getSession().setAttribute("LOGIN_USER", userModel);
+
+        return CommonReturnType.create(null);
+    }
+
 
     // 用户注册接口
     @RequestMapping(value = "/register", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
