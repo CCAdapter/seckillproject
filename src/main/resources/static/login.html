@@ -38,7 +38,7 @@
 <script>
     jQuery(document).ready(function () {
         $("#register").on("click", function () {
-            window.location.href="getotp.html";
+            window.location.href = "getotp.html";
         });
 
         $("#login").on("click", function () {
@@ -65,6 +65,7 @@
                 success: function (data) {
                     if (data.status == "success") {
                         alert("登录成功");
+                        window.location.href = "listitem.html";
                     } else {
                         alert("登录失败,原因为" + data.data.errMsg);
                     }

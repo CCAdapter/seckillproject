@@ -17,4 +17,10 @@ public interface ItemService {
 
     // 商品详情浏览
     ItemModel getItemById(Integer id);
+
+    // 库存扣减，返回成功与否
+    boolean decreaseStock(Integer itemId, Integer amount);
+
+    // 商品销量增加
+    void increaseSales(Integer itemId, Integer amount);
 }

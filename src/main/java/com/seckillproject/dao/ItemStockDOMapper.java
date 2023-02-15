@@ -1,6 +1,7 @@
 package com.seckillproject.dao;
 
 import com.seckillproject.dataobject.ItemStockDO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -54,4 +55,6 @@ public interface ItemStockDOMapper {
      * @mbg.generated Wed Feb 08 23:40:59 CST 2023
      */
     int updateByPrimaryKey(ItemStockDO record);
+
+    int decreaseStock(@Param("itemId") Integer itemId, @Param("amount") Integer amount);
 }
