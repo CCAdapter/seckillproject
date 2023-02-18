@@ -28,6 +28,17 @@ public class ItemModel {
     // 商品的销量
     private Integer sales;
 
+    // 使用聚合模型，关联秒杀商品和秒杀活动，如果promoModel不为空，则表示其拥有还未结束的秒杀活动
+    private PromoModel promoModel;
+
+    public PromoModel getPromoModel() {
+        return promoModel;
+    }
+
+    public void setPromoModel(PromoModel promoModel) {
+        this.promoModel = promoModel;
+    }
+
     //商品描述图片的url
     @NotNull(message = "商品图片信息不能为空")
     private String imgUrl;

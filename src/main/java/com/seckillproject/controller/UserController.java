@@ -122,7 +122,7 @@ public class UserController extends BaseController {
         return userVO;
     }
 
-    public String EncodeByMd5(String str) throws NoSuchAlgorithmException {
+    private String EncodeByMd5(String str) throws NoSuchAlgorithmException {
         // 确定计算方法
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         BASE64Encoder base64Encoder = new BASE64Encoder();
