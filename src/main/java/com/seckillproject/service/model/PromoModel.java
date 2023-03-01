@@ -2,9 +2,10 @@ package com.seckillproject.service.model;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class PromoModel {
+public class PromoModel implements Serializable {
     private Integer id;
 
     // 秒杀活动状态 1：还未开始 2：进行中 3：已结束
