@@ -3,6 +3,7 @@ package com.seckillproject.controller;
 import com.seckillproject.controller.viewobject.ItemVO;
 import com.seckillproject.error.BusinessException;
 import com.seckillproject.response.CommonReturnType;
+import com.seckillproject.service.CacheService;
 import com.seckillproject.service.ItemService;
 import com.seckillproject.service.model.ItemModel;
 import org.joda.time.format.DateTimeFormat;
@@ -27,6 +28,9 @@ public class ItemController extends BaseController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private CacheService cacheService;
 
     // 创建商品
     @RequestMapping(value = "/create", method = {RequestMethod.POST}, consumes = {CONTENT_TYPE_FORMED})
@@ -54,15 +58,25 @@ public class ItemController extends BaseController {
     @ResponseBody
     public CommonReturnType getItem(@RequestParam(name = "id") Integer id) {
 
-        // 根据商品的id到redis内获取
-        Object o = redisTemplate.opsForValue().get("item_" + id);
-        ItemModel itemModel = (ItemModel) o;
+        ItemModel itemModel = null;
 
-        // 若redis内不存在对应的itemModel，则访问下游service
+        // 先取本地缓存
+        itemModel = (ItemModel) cacheService.getCommonCache("item_" + id);
+
         if (itemModel == null) {
-            itemModel = itemService.getItemById(id);
-            redisTemplate.opsForValue().set("item_" + id, itemModel);
-            redisTemplate.expire("item_" + id, 10, TimeUnit.MINUTES);
+            // 根据商品的id到redis内获取
+            Object itemModelObject = redisTemplate.opsForValue().get("item_" + id);
+            itemModel = (ItemModel) itemModelObject;
+
+            // 若redis内不存在对应的itemModel，则访问下游service
+            if (itemModel == null) {
+                itemModel = itemService.getItemById(id);
+                //填充Redis缓存
+                redisTemplate.opsForValue().set("item_" + id, itemModel);
+                redisTemplate.expire("item_" + id, 10, TimeUnit.MINUTES);
+            }
+            // 填充本地缓存
+            cacheService.setCommonCache("item_" + id, itemModel);
         }
 
         ItemVO itemVO = convertVOFromModel(itemModel);
